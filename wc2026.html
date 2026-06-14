@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WC 2026 Betting Tracker | FIFA World Cup 2026</title>
+<meta name="description" content="FIFA World Cup 2026 live match tracker with bookmaker win probabilities, match predictions, squad profiles and interactive geo maps. All times in MYT.">
+<meta name="author" content="WC2026 Tracker">
+<meta property="og:title" content="WC 2026 Betting Tracker">
+<meta property="og:description" content="Live FIFA World Cup 2026 match predictions, bookmaker odds, squad viewer and geo maps.">
+<meta property="og:type" content="website">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Inter:wght@400;500;600&display=swap');
+:root{--pitch:#0a5c2a;--pitchl:#0d7a38;--gold:#f5c518;--goldd:#c49a10;--red:#e63946;--blue:#1d7ec9;--slate:#131720;--slatem:#1c2130;--slatel:#252d3f;--text:#e8eaf0;--textd:#8892a4;--textm:#5a6478;--win:#22c55e;--drawc:#f59e0b;--loss:#ef4444;--upset:#ff6b35;--bdr:rgba(255,255,255,0.07)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--slate);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;min-height:100vh}
+header{background:linear-gradient(135deg,#071a0e 0%,var(--pitch) 55%,#0a2050 100%);padding:14px 16px;border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:100}
+.hrow{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.logo{display:flex;align-items:center;gap:9px}
+.lball{width:36px;height:36px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
+.ltxt{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:19px;letter-spacing:1px;line-height:1.1}
+.ltxt span{color:var(--gold)}
+.lsub{font-size:9px;color:var(--textd);letter-spacing:2px;text-transform:uppercase}
+.btnr{background:var(--gold);color:#000;border:none;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;padding:6px 13px;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:background .2s}
+.btnr:hover{background:var(--goldd)}
+.btnr.spin .ri{animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ri{display:inline-block}
+.lu{font-size:9px;color:var(--textm);margin-top:2px;text-align:right}
+.tabs{display:flex;overflow-x:auto;background:var(--slatem);border-bottom:1px solid var(--bdr);scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:9px 14px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;color:var(--textm);cursor:pointer;border:none;background:transparent;text-transform:uppercase;border-bottom:2px solid transparent;transition:all .2s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.main{padding:10px;max-width:860px;margin:0 auto}
+.sbar{background:var(--slatem);border:1px solid var(--bdr);border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;flex-wrap:wrap}
+.si{flex:1;min-width:55px;text-align:center;padding:3px 5px;border-right:1px solid var(--bdr)}
+.si:last-child{border-right:none}
+.sn{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;line-height:1;color:var(--gold)}
+.sd{font-size:9px;color:var(--textm);margin-top:1px}
+.dh{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin:16px 0 6px;display:flex;align-items:center;gap:8px}
+.dh::after{content:'';flex:1;height:1px;background:var(--bdr)}
+.tbadge{font-size:9px;background:var(--red);color:#fff;padding:2px 5px;border-radius:3px;font-weight:700;letter-spacing:1px;animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.card{background:var(--slatem);border:1px solid var(--bdr);border-radius:8px;margin-bottom:7px;overflow:hidden;transition:border-color .2s}
+.card:hover{border-color:rgba(245,197,24,.2)}
+.card.livec{border-color:var(--red)}
+.card.done{opacity:.88}
+.card.upsetc{border-color:var(--upset)}
+.ct{padding:7px 11px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.cg{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--textm);background:var(--slatel);padding:2px 5px;border-radius:3px}
+.utag{font-size:9px;font-weight:700;background:var(--upset);color:#fff;padding:2px 6px;border-radius:3px}
+.cv{font-size:10px;color:var(--textm)}
+.ctime{font-size:10px;color:var(--textd);margin-left:auto}
+.livet{color:var(--red);font-weight:600;animation:pulse 1.5s ease-in-out infinite}
+.tr{padding:2px 11px 8px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px}
+.team{display:flex;align-items:center;gap:7px;cursor:pointer;border-radius:6px;padding:4px 6px;transition:background .15s}
+.team:hover{background:rgba(245,197,24,.08)}
+.team.away{flex-direction:row-reverse;text-align:right}
+.flagw{position:relative;display:inline-block;line-height:1}
+.flagw::after{content:'👤';position:absolute;bottom:-2px;right:-6px;background:var(--gold);border-radius:50%;width:14px;height:14px;font-size:8px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;pointer-events:none}
+.team:hover .flagw::after{opacity:1}
+.tf{font-size:26px;line-height:1}
+.tn{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.5px;line-height:1.1}
+.taphint{font-size:8px;color:var(--textm);display:block;margin-top:1px}
+.sb2{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:60px}
+.sc{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;letter-spacing:2px}
+.sp{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:2px 6px;border-radius:10px}
+.sp.ft{background:rgba(255,255,255,.08);color:var(--textm)}
+.sp.live{background:var(--red);color:#fff}
+.sp.up{background:var(--slatel);color:var(--textd)}
+.prow{padding:4px 11px 0}
+.plr{display:flex;justify-content:space-between;font-size:9px;color:var(--textm);margin-bottom:3px}
+.plr .hl{color:var(--textd);font-weight:600}
+.pbar{height:22px;border-radius:4px;overflow:hidden;display:flex;width:100%}
+.phb{background:var(--pitchl);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;min-width:18px}
+.pdb{background:#5a4500;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--drawc);min-width:16px}
+.pab{background:#0a2a5c;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#7ab8f5;min-width:18px}
+.pteams{display:flex;justify-content:space-between;font-size:9px;margin-top:3px}
+.phl{color:var(--win)}.pdl{color:var(--drawc)}.pal{color:var(--blue)}
+.pp{border-top:1px solid var(--bdr);padding:9px 11px;display:flex;flex-wrap:wrap;gap:9px;align-items:flex-start}
+.pks{min-width:150px}
+.pl{font-size:8px;color:var(--textm);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.pbr{display:flex;gap:4px}
+.pbb{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;padding:4px 9px;border-radius:4px;border:1.5px solid var(--bdr);background:transparent;color:var(--textm);cursor:pointer;transition:all .15s}
+.pbb:hover{border-color:var(--gold);color:var(--gold)}
+.pbb.selh{background:var(--pitch);border-color:var(--win);color:#fff}
+.pbb.seld{background:#3d2600;border-color:var(--drawc);color:#fff}
+.pbb.sela{background:#0e2240;border-color:var(--blue);color:#fff}
+.ris{flex:1;min-width:170px}
+.at{font-size:11px;color:var(--textd);line-height:1.45;background:var(--slatel);border-radius:4px;padding:5px 9px;border-left:3px solid var(--gold)}
+.sugg{color:var(--gold);font-weight:600}
+.rbdg{display:inline-flex;align-items:center;gap:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;padding:3px 8px;border-radius:4px;margin-top:4px;letter-spacing:.5px}
+.rc{background:rgba(34,197,94,.15);color:var(--win);border:1px solid var(--win)}
+.rw{background:rgba(239,68,68,.15);color:var(--loss);border:1px solid var(--loss)}
+.rp{background:rgba(245,158,11,.1);color:var(--drawc);border:1px solid var(--drawc)}
+/* MODAL */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;align-items:flex-end;justify-content:center}
+.mbg.open{display:flex}
+.mbox{background:var(--slatem);border-top:2px solid var(--gold);border-radius:16px 16px 0 0;width:100%;max-width:720px;max-height:92vh;overflow-y:auto;animation:slideUp .28s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mhead{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:10px 14px 8px;background:var(--slatem);border-bottom:1px solid var(--bdr)}
+.mhtitle{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;color:var(--textd);text-transform:uppercase}
+.mcbtn{background:var(--slatel);border:1px solid var(--bdr);color:var(--textd);font-size:14px;border-radius:50%;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.mcbtn:hover{color:var(--text);border-color:var(--gold)}
+.mhero{background:linear-gradient(135deg,#071a0e 0%,#0f3a20 50%,#0a2050 100%);padding:18px 16px 14px;display:flex;align-items:center;gap:14px}
+.mflag{font-size:54px;line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.4))}
+.mname{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;letter-spacing:1px}
+.mtags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.mtag{background:rgba(255,255,255,.08);border:1px solid var(--bdr);border-radius:3px;padding:2px 7px;font-size:9px;letter-spacing:.5px;color:var(--textd)}
+.mbody{padding:14px}
+.sect{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.sect::after{content:'';flex:1;height:1px;background:var(--bdr)}
+.mapf{width:100%;height:210px;border-radius:8px;border:1px solid var(--bdr);overflow:hidden;background:var(--slatel);margin-bottom:14px}
+.mapf iframe{width:100%;height:100%;border:none}
+.cstats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}
+.cst{background:var(--slatel);border-radius:6px;padding:9px;text-align:center;border:1px solid var(--bdr)}
+.csn{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:var(--gold)}
+.csl{font-size:9px;color:var(--textm);margin-top:2px}
+.pfilt{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.pfb{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;padding:3px 10px;border-radius:3px;border:1px solid var(--bdr);background:transparent;color:var(--textm);cursor:pointer;letter-spacing:.5px;transition:all .15s}
+.pfb:hover,.pfb.pfa{background:var(--gold);color:#000;border-color:var(--gold)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:7px;margin-bottom:10px}
+.pc{background:var(--slatel);border-radius:6px;padding:9px 10px;border:1px solid var(--bdr);position:relative;transition:border-color .15s}
+.pc:hover{border-color:rgba(245,197,24,.3)}
+.pc.star{border-left:3px solid var(--gold)}
+.ppos{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:1px 5px;border-radius:3px;display:inline-block;margin-bottom:3px}
+.posGK{background:rgba(245,158,11,.2);color:var(--drawc)}
+.posDF{background:rgba(30,124,201,.2);color:var(--blue)}
+.posMF{background:rgba(34,197,94,.2);color:var(--win)}
+.posFW{background:rgba(230,57,70,.2);color:var(--red)}
+.pname{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;line-height:1.2}
+.pclub{font-size:9px;color:var(--textm);margin-top:2px}
+.page{font-size:9px;color:var(--textd);margin-top:1px}
+.stic{position:absolute;top:8px;right:8px;font-size:10px}
+.loading{display:none;position:fixed;inset:0;background:rgba(10,15,25,.8);z-index:600;align-items:center;justify-content:center;flex-direction:column;gap:9px}
+.loading.show{display:flex}
+.spinner{width:32px;height:32px;border:3px solid var(--bdr);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--slatel);border:1px solid var(--gold);color:var(--text);padding:8px 16px;border-radius:6px;font-size:11px;z-index:700;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+.empty{text-align:center;padding:36px;color:var(--textm);font-size:13px}
+@media(max-width:460px){.tn{font-size:12px}.sc{font-size:18px}.tf{font-size:20px}.ris{min-width:100%}.mhero{flex-direction:column;align-items:flex-start}.pgrid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="loading" id="lo"><div class="spinner"></div><div style="color:var(--textd);font-size:11px">Loading…</div></div>
+<div class="toast" id="toast"></div>
+<div class="mbg" id="mbg" onclick="closeBG(event)">
+  <div class="mbox" id="mbox">
+    <div class="mhead">
+      <span class="mhtitle" id="mhtitle">Country Profile</span>
+      <button class="mcbtn" onclick="closeM()">✕</button>
+    </div>
+    <div class="mhero">
+      <div class="mflag" id="mFlag"></div>
+      <div><div class="mname" id="mName"></div><div class="mtags" id="mTags"></div></div>
+    </div>
+    <div class="mbody">
+      <div class="sect">📍 Location</div>
+      <div class="mapf" id="mapF"></div>
+      <div class="sect">📊 Stats</div>
+      <div class="cstats" id="cStats"></div>
+      <div class="sect">👤 Squad</div>
+      <div class="pfilt" id="pfilt">
+        <button class="pfb pfa" onclick="fpos('ALL',this)">All</button>
+        <button class="pfb" onclick="fpos('GK',this)">GK</button>
+        <button class="pfb" onclick="fpos('DF',this)">Defenders</button>
+        <button class="pfb" onclick="fpos('MF',this)">Midfielders</button>
+        <button class="pfb" onclick="fpos('FW',this)">Forwards</button>
+      </div>
+      <div class="pgrid" id="pgrid"></div>
+    </div>
+  </div>
+</div>
+<header>
+  <div class="hrow">
+    <div class="logo">
+      <div class="lball">⚽</div>
+      <div><div class="ltxt">WC 2026 <span>TRACKER</span></div><div class="lsub">Tap flag → squad &amp; map · Bookie odds · MYT</div></div>
+    </div>
+    <div>
+      <button class="btnr" id="rbtn" onclick="doRefresh()"><span class="ri" id="ri">↻</span> Refresh</button>
+      <div class="lu" id="lu">Tap to refresh</div>
+    </div>
+  </div>
+</header>
+<div class="tabs">
+  <button class="tab active" onclick="swTab('all',this)">All</button>
+  <button class="tab" onclick="swTab('today',this)">Today</button>
+  <button class="tab" onclick="swTab('upcoming',this)">Upcoming</button>
+  <button class="tab" onclick="swTab('results',this)">Results</button>
+  <button class="tab" onclick="swTab('picks',this)">My Picks</button>
+</div>
+<div class="main">
+  <div class="sbar">
+    <div class="si"><div class="sn">72</div><div class="sd">Matches</div></div>
+    <div class="si"><div class="sn" id="sDone">0</div><div class="sd">Done</div></div>
+    <div class="si"><div class="sn" id="sPicks">0</div><div class="sd">My Picks</div></div>
+    <div class="si"><div class="sn" id="sCor">0</div><div class="sd">Correct</div></div>
+    <div class="si"><div class="sn" id="sRate">-</div><div class="sd">Hit Rate</div></div>
+  </div>
+  <div id="ml"></div>
+</div>
+<script>
+const COUNTRIES={
+"Mexico":{f:"🇲🇽",lat:23.6,lng:-102.5,cap:"Mexico City",conf:"CONCACAF",rank:15,wc:17,best:"Quarters (7x)",coach:"Javier Aguirre",p:[{n:"Guillermo Ochoa",pos:"GK",a:39,cl:"Club America",s:true,caps:148},{n:"Nestor Araujo",pos:"DF",a:33,cl:"Celta Vigo",s:false,caps:76},{n:"Edson Alvarez",pos:"MF",a:27,cl:"West Ham",s:true,caps:98},{n:"Chucky Lozano",pos:"FW",a:30,cl:"PSV Eindhoven",s:true,caps:90},{n:"Raul Jimenez",pos:"FW",a:33,cl:"Fulham",s:true,caps:116},{n:"Santiago Gimenez",pos:"FW",a:23,cl:"Feyenoord",s:true,caps:25}]},
+"South Africa":{f:"🇿🇦",lat:-29,lng:25,cap:"Pretoria",conf:"CAF",rank:62,wc:4,best:"Group Stage",coach:"Hugo Broos",p:[{n:"Ronwen Williams",pos:"GK",a:32,cl:"Mamelodi Sundowns",s:true,caps:38},{n:"Percy Tau",pos:"FW",a:30,cl:"Al-Ahly",s:true,caps:46},{n:"Bongani Zungu",pos:"MF",a:31,cl:"Rangers",s:true,caps:50},{n:"Lyle Foster",pos:"FW",a:23,cl:"Burnley",s:true,caps:18}]},
+"Korea Republic":{f:"🇰🇷",lat:36.5,lng:127.5,cap:"Seoul",conf:"AFC",rank:24,wc:11,best:"4th Place (2002)",coach:"Hong Myung-bo",p:[{n:"Kim Seung-gyu",pos:"GK",a:34,cl:"Vissel Kobe",s:false,caps:81},{n:"Kim Min-jae",pos:"DF",a:28,cl:"Bayern Munich",s:true,caps:61},{n:"Son Heung-min",pos:"FW",a:32,cl:"Tottenham",s:true,caps:120},{n:"Lee Kang-in",pos:"FW",a:23,cl:"PSG",s:true,caps:41}]},
+"Czechia":{f:"🇨🇿",lat:49.8,lng:15.5,cap:"Prague",conf:"UEFA",rank:37,wc:9,best:"Runner-up (1962)",coach:"Ivan Hasek",p:[{n:"Jiri Stanek",pos:"GK",a:28,cl:"Sevilla",s:false,caps:22},{n:"Tomas Soucek",pos:"MF",a:29,cl:"West Ham",s:true,caps:74},{n:"Patrik Schick",pos:"FW",a:28,cl:"Bayer Leverkusen",s:true,caps:47},{n:"Adam Hlozek",pos:"FW",a:22,cl:"Bayer Leverkusen",s:true,caps:25}]},
+"Canada":{f:"🇨🇦",lat:60,lng:-96,cap:"Ottawa",conf:"CONCACAF",rank:43,wc:2,best:"Group Stage (2022)",coach:"Jesse Marsch",p:[{n:"Maxime Crepeau",pos:"GK",a:29,cl:"LA Galaxy",s:false,caps:41},{n:"Alphonso Davies",pos:"DF",a:24,cl:"Bayern Munich",s:true,caps:58},{n:"Stephen Eustaquio",pos:"MF",a:27,cl:"Porto",s:true,caps:45},{n:"Jonathan David",pos:"FW",a:24,cl:"Arsenal",s:true,caps:53},{n:"Cyle Larin",pos:"FW",a:29,cl:"Club Brugge",s:false,caps:60}]},
+"Bosnia":{f:"🇧🇦",lat:44,lng:17.5,cap:"Sarajevo",conf:"UEFA",rank:59,wc:2,best:"Group Stage (2014)",coach:"Sergej Barbarez",p:[{n:"Miralem Pjanic",pos:"MF",a:34,cl:"Sharjah FC",s:true,caps:99},{n:"Edin Dzeko",pos:"FW",a:38,cl:"Fenerbahce",s:true,caps:129},{n:"Amar Dedic",pos:"DF",a:23,cl:"RB Salzburg",s:false,caps:21}]},
+"Qatar":{f:"🇶🇦",lat:25.3,lng:51.2,cap:"Doha",conf:"AFC",rank:58,wc:2,best:"Group Stage (2022)",coach:"Marquez Lopez",p:[{n:"Meshaal Barsham",pos:"GK",a:26,cl:"Al-Sadd",s:false,caps:35},{n:"Akram Afif",pos:"FW",a:27,cl:"Al-Sadd",s:true,caps:77},{n:"Almoez Ali",pos:"FW",a:28,cl:"Al-Duhail",s:true,caps:88}]},
+"Switzerland":{f:"🇨🇭",lat:47,lng:8.2,cap:"Bern",conf:"UEFA",rank:19,wc:12,best:"Quarters (1954)",coach:"Murat Yakin",p:[{n:"Yann Sommer",pos:"GK",a:36,cl:"Inter Milan",s:true,caps:96},{n:"Manuel Akanji",pos:"DF",a:29,cl:"Man City",s:true,caps:68},{n:"Granit Xhaka",pos:"MF",a:32,cl:"Bayer Leverkusen",s:true,caps:124},{n:"Breel Embolo",pos:"FW",a:27,cl:"Monaco",s:true,caps:60}]},
+"USA":{f:"🇺🇸",lat:38,lng:-97,cap:"Washington D.C.",conf:"CONCACAF",rank:16,wc:11,best:"3rd Place (1930)",coach:"Mauricio Pochettino",p:[{n:"Matt Turner",pos:"GK",a:30,cl:"New England",s:false,caps:37},{n:"Tyler Adams",pos:"MF",a:26,cl:"Bournemouth",s:true,caps:57},{n:"Christian Pulisic",pos:"FW",a:26,cl:"AC Milan",s:true,caps:72},{n:"Weston McKennie",pos:"MF",a:26,cl:"Juventus",s:true,caps:56},{n:"Folarin Balogun",pos:"FW",a:23,cl:"Monaco",s:true,caps:18}]},
+"Paraguay":{f:"🇵🇾",lat:-23,lng:-58,cap:"Asuncion",conf:"CONMEBOL",rank:60,wc:8,best:"Quarters (2010)",coach:"Gustavo Alfaro",p:[{n:"Gustavo Gomez",pos:"DF",a:31,cl:"Palmeiras",s:true,caps:77},{n:"Miguel Almiron",pos:"MF",a:31,cl:"Newcastle",s:true,caps:68},{n:"Antonio Sanabria",pos:"FW",a:28,cl:"Torino",s:false,caps:35}]},
+"Brazil":{f:"🇧🇷",lat:-14.2,lng:-51.9,cap:"Brasilia",conf:"CONMEBOL",rank:5,wc:22,best:"Champions (5x)",coach:"Dorival Junior",p:[{n:"Alisson Becker",pos:"GK",a:32,cl:"Liverpool",s:true,caps:77},{n:"Marquinhos",pos:"DF",a:30,cl:"PSG",s:true,caps:95},{n:"Casemiro",pos:"MF",a:33,cl:"Man United",s:true,caps:78},{n:"Vinicius Jr",pos:"FW",a:24,cl:"Real Madrid",s:true,caps:45},{n:"Rodrygo",pos:"FW",a:23,cl:"Real Madrid",s:true,caps:38},{n:"Endrick",pos:"FW",a:18,cl:"Real Madrid",s:true,caps:14},{n:"Raphinha",pos:"FW",a:27,cl:"Barcelona",s:true,caps:43},{n:"Bruno Guimaraes",pos:"MF",a:27,cl:"Newcastle",s:true,caps:41}]},
+"Morocco":{f:"🇲🇦",lat:31.8,lng:-7.1,cap:"Rabat",conf:"CAF",rank:14,wc:7,best:"4th Place (2022)",coach:"Walid Regragui",p:[{n:"Yassine Bounou",pos:"GK",a:33,cl:"Al-Hilal",s:true,caps:59},{n:"Achraf Hakimi",pos:"DF",a:25,cl:"PSG",s:true,caps:63},{n:"Sofyan Amrabat",pos:"MF",a:28,cl:"Fiorentina",s:true,caps:51},{n:"Hakim Ziyech",pos:"FW",a:32,cl:"Galatasaray",s:true,caps:55},{n:"Youssef En-Nesyri",pos:"FW",a:27,cl:"Fenerbahce",s:true,caps:54}]},
+"Haiti":{f:"🇭🇹",lat:18.9,lng:-72.3,cap:"Port-au-Prince",conf:"CONCACAF",rank:81,wc:2,best:"Group Stage",coach:"Jean-Jacques Pierre",p:[{n:"Duckens Nazon",pos:"FW",a:31,cl:"PAOK",s:true,caps:44},{n:"Frantzdy Pierrot",pos:"FW",a:28,cl:"Troyes",s:false,caps:32},{n:"Josue Duverger",pos:"GK",a:26,cl:"Saprissa",s:false,caps:18}]},
+"Scotland":{f:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",lat:56.5,lng:-4.2,cap:"Edinburgh",conf:"UEFA",rank:41,wc:9,best:"Group Stage (8x)",coach:"Steve Clarke",p:[{n:"Angus Gunn",pos:"GK",a:28,cl:"Norwich",s:false,caps:16},{n:"Andrew Robertson",pos:"DF",a:31,cl:"Liverpool",s:true,caps:74},{n:"Scott McTominay",pos:"MF",a:28,cl:"Napoli",s:true,caps:56},{n:"John McGinn",pos:"MF",a:30,cl:"Aston Villa",s:true,caps:70},{n:"Che Adams",pos:"FW",a:28,cl:"Southampton",s:false,caps:28}]},
+"Australia":{f:"🇦🇺",lat:-25.3,lng:133.8,cap:"Canberra",conf:"AFC",rank:25,wc:6,best:"3rd Place (2006)",coach:"Tony Popovic",p:[{n:"Patrick Beach",pos:"GK",a:28,cl:"Macarthur FC",s:false,caps:5},{n:"Harry Souttar",pos:"DF",a:25,cl:"Leicester City",s:true,caps:27},{n:"Jackson Irvine",pos:"MF",a:31,cl:"St. Pauli",s:false,caps:68},{n:"Connor Metcalfe",pos:"MF",a:24,cl:"Stoke City",s:false,caps:16},{n:"Nestory Irankunda",pos:"FW",a:18,cl:"Bayern Munich",s:true,caps:12},{n:"Mathew Leckie",pos:"FW",a:33,cl:"Melbourne City",s:false,caps:94},{n:"Awer Mabil",pos:"FW",a:29,cl:"Cadiz",s:false,caps:43}]},
+"Turkiye":{f:"🇹🇷",lat:38.9,lng:35.2,cap:"Ankara",conf:"UEFA",rank:33,wc:2,best:"3rd Place (2002)",coach:"Vincenzo Montella",p:[{n:"Ugurcan Cakir",pos:"GK",a:28,cl:"Trabzonspor",s:false,caps:36},{n:"Hakan Calhanoglu",pos:"MF",a:31,cl:"Inter Milan",s:true,caps:97},{n:"Arda Guler",pos:"MF",a:20,cl:"Real Madrid",s:true,caps:21},{n:"Kenan Yildiz",pos:"FW",a:20,cl:"Juventus",s:true,caps:18},{n:"Baris Alper Yilmaz",pos:"FW",a:25,cl:"Galatasaray",s:false,caps:23}]},
+"Germany":{f:"🇩🇪",lat:51.2,lng:10.4,cap:"Berlin",conf:"UEFA",rank:12,wc:20,best:"Champions (4x)",coach:"Julian Nagelsmann",p:[{n:"Manuel Neuer",pos:"GK",a:39,cl:"Bayern Munich",s:true,caps:124},{n:"Joshua Kimmich",pos:"DF",a:29,cl:"Bayern Munich",s:true,caps:87},{n:"Antonio Rudiger",pos:"DF",a:32,cl:"Real Madrid",s:true,caps:77},{n:"Florian Wirtz",pos:"MF",a:22,cl:"Bayer Leverkusen",s:true,caps:28},{n:"Jamal Musiala",pos:"MF",a:22,cl:"Bayern Munich",s:true,caps:38},{n:"Toni Kroos",pos:"MF",a:35,cl:"Real Madrid",s:true,caps:107},{n:"Leroy Sane",pos:"FW",a:29,cl:"Bayern Munich",s:true,caps:65},{n:"Kai Havertz",pos:"FW",a:26,cl:"Arsenal",s:true,caps:55},{n:"Thomas Muller",pos:"FW",a:35,cl:"Bayern Munich",s:true,caps:131}]},
+"Curacao":{f:"🇨🇼",lat:12.2,lng:-69,cap:"Willemstad",conf:"CONCACAF",rank:78,wc:1,best:"1st World Cup 2026!",coach:"Dick Advocaat",p:[{n:"Eloy Room",pos:"GK",a:35,cl:"Columbus Crew",s:false,caps:40},{n:"Leandro Bacuna",pos:"MF",a:33,cl:"Middlesbrough",s:true,caps:60},{n:"Juninho Bacuna",pos:"MF",a:28,cl:"Rangers",s:true,caps:42},{n:"Riechedly Bazoer",pos:"DF",a:28,cl:"KAA Gent",s:false,caps:35}]},
+"Netherlands":{f:"🇳🇱",lat:52.3,lng:5.3,cap:"Amsterdam",conf:"UEFA",rank:7,wc:11,best:"Runner-up (3x)",coach:"Ronald Koeman",p:[{n:"Bart Verbruggen",pos:"GK",a:22,cl:"Brighton",s:false,caps:12},{n:"Virgil van Dijk",pos:"DF",a:33,cl:"Liverpool",s:true,caps:67},{n:"Frenkie de Jong",pos:"MF",a:27,cl:"Barcelona",s:true,caps:62},{n:"Tijjani Reijnders",pos:"MF",a:26,cl:"AC Milan",s:true,caps:21},{n:"Cody Gakpo",pos:"FW",a:25,cl:"Liverpool",s:true,caps:37},{n:"Memphis Depay",pos:"FW",a:30,cl:"Atletico Madrid",s:true,caps:103}]},
+"Japan":{f:"🇯🇵",lat:36.2,lng:138.3,cap:"Tokyo",conf:"AFC",rank:18,wc:8,best:"Quarters (2022)",coach:"Hajime Moriyasu",p:[{n:"Shuichi Gonda",pos:"GK",a:31,cl:"Shimizu S-Pulse",s:false,caps:53},{n:"Wataru Endo",pos:"MF",a:31,cl:"Liverpool",s:true,caps:56},{n:"Daichi Kamada",pos:"MF",a:28,cl:"Crystal Palace",s:true,caps:41},{n:"Ritsu Doan",pos:"FW",a:26,cl:"Freiburg",s:true,caps:49},{n:"Takefusa Kubo",pos:"FW",a:23,cl:"Real Sociedad",s:true,caps:35}]},
+"Cote dIvoire":{f:"🇨🇮",lat:7.5,lng:-5.5,cap:"Abidjan",conf:"CAF",rank:29,wc:4,best:"Group Stage (3x)",coach:"Emerse Fae",p:[{n:"Yahia Fofana",pos:"GK",a:28,cl:"Chelsea",s:false,caps:25},{n:"Franck Kessie",pos:"MF",a:27,cl:"Al-Ahli",s:true,caps:67},{n:"Seko Fofana",pos:"MF",a:29,cl:"Al-Qadsiah",s:true,caps:44},{n:"Wilfried Zaha",pos:"FW",a:31,cl:"Galatasaray",s:true,caps:40},{n:"Sebastien Haller",pos:"FW",a:30,cl:"Borussia Dortmund",s:true,caps:38},{n:"Simon Adingra",pos:"FW",a:23,cl:"Brighton",s:true,caps:21}]},
+"Ecuador":{f:"🇪🇨",lat:-1.8,lng:-78.2,cap:"Quito",conf:"CONMEBOL",rank:41,wc:4,best:"Quarters (2006)",coach:"Felix Sanchez",p:[{n:"Hernan Galindez",pos:"GK",a:34,cl:"U. de Chile",s:false,caps:51},{n:"Piero Hincapie",pos:"DF",a:23,cl:"Bayer Leverkusen",s:true,caps:37},{n:"Moises Caicedo",pos:"MF",a:23,cl:"Chelsea",s:true,caps:37},{n:"Kendry Paez",pos:"MF",a:18,cl:"Chelsea",s:true,caps:12},{n:"Enner Valencia",pos:"FW",a:35,cl:"Fenerbahce",s:true,caps:81}]},
+"Sweden":{f:"🇸🇪",lat:60.1,lng:18.6,cap:"Stockholm",conf:"UEFA",rank:27,wc:12,best:"Runner-up (1958)",coach:"Jon Dahl Tomasson",p:[{n:"Robin Olsen",pos:"GK",a:34,cl:"Aston Villa",s:false,caps:55},{n:"Victor Lindelof",pos:"DF",a:30,cl:"Man United",s:true,caps:73},{n:"Dejan Kulusevski",pos:"FW",a:25,cl:"Tottenham",s:true,caps:52},{n:"Alexander Isak",pos:"FW",a:25,cl:"Newcastle",s:true,caps:42},{n:"Viktor Gyokeres",pos:"FW",a:26,cl:"Sporting CP",s:true,caps:30}]},
+"Tunisia":{f:"🇹🇳",lat:33.9,lng:9.5,cap:"Tunis",conf:"CAF",rank:30,wc:6,best:"Group Stage (5x)",coach:"Jalel Kadri",p:[{n:"Aymen Dahmen",pos:"GK",a:27,cl:"Montpellier",s:false,caps:18},{n:"Ellyes Skhiri",pos:"MF",a:29,cl:"Eintracht Frankfurt",s:true,caps:54},{n:"Seifeddine Jaziri",pos:"FW",a:32,cl:"Zamalek",s:false,caps:30}]},
+"Spain":{f:"🇪🇸",lat:40.5,lng:-3.7,cap:"Madrid",conf:"UEFA",rank:3,wc:16,best:"Champions (2010)",coach:"Luis de la Fuente",p:[{n:"David Raya",pos:"GK",a:29,cl:"Arsenal",s:false,caps:22},{n:"Dani Carvajal",pos:"DF",a:32,cl:"Real Madrid",s:true,caps:56},{n:"Rodri",pos:"MF",a:28,cl:"Man City",s:true,caps:44},{n:"Pedri",pos:"MF",a:23,cl:"Barcelona",s:true,caps:32},{n:"Lamine Yamal",pos:"FW",a:17,cl:"Barcelona",s:true,caps:18},{n:"Nico Williams",pos:"FW",a:22,cl:"Athletic Bilbao",s:true,caps:24},{n:"Alvaro Morata",pos:"FW",a:32,cl:"AC Milan",s:true,caps:77}]},
+"Cape Verde":{f:"🇨🇻",lat:16,lng:-24,cap:"Praia",conf:"CAF",rank:73,wc:1,best:"1st World Cup 2026!",coach:"Pedro Brito Leitao",p:[{n:"Vozinha",pos:"GK",a:28,cl:"Cadiz",s:false,caps:22},{n:"Ryan Mendes",pos:"FW",a:35,cl:"AS Monaco",s:true,caps:52},{n:"Garry Rodrigues",pos:"FW",a:33,cl:"Galatasaray",s:true,caps:49},{n:"Stopira",pos:"DF",a:35,cl:"Las Palmas",s:false,caps:74}]},
+"Belgium":{f:"🇧🇪",lat:50.5,lng:4.5,cap:"Brussels",conf:"UEFA",rank:6,wc:14,best:"3rd Place (2018)",coach:"Domenico Tedesco",p:[{n:"Koen Casteels",pos:"GK",a:32,cl:"Wolfsburg",s:false,caps:34},{n:"Jan Vertonghen",pos:"DF",a:37,cl:"Anderlecht",s:true,caps:161},{n:"Kevin De Bruyne",pos:"MF",a:34,cl:"Man City",s:true,caps:105},{n:"Romelu Lukaku",pos:"FW",a:31,cl:"Roma",s:true,caps:120},{n:"Leandro Trossard",pos:"FW",a:30,cl:"Arsenal",s:true,caps:38}]},
+"Egypt":{f:"🇪🇬",lat:26,lng:30,cap:"Cairo",conf:"CAF",rank:35,wc:4,best:"Group Stage",coach:"Hossam Hassan",p:[{n:"Mohamed El Shenawy",pos:"GK",a:34,cl:"Al-Ahly",s:false,caps:30},{n:"Mohamed Elneny",pos:"MF",a:31,cl:"Arsenal",s:false,caps:90},{n:"Mohamed Salah",pos:"FW",a:33,cl:"Liverpool",s:true,caps:101},{n:"Mostafa Mohamed",pos:"FW",a:27,cl:"Galatasaray",s:true,caps:34}]},
+"Saudi Arabia":{f:"🇸🇦",lat:24,lng:45,cap:"Riyadh",conf:"AFC",rank:56,wc:7,best:"Round of 16 (1994)",coach:"Roberto Mancini",p:[{n:"Mohammed Al-Owais",pos:"GK",a:32,cl:"Al-Hilal",s:false,caps:41},{n:"Salem Al-Dawsari",pos:"FW",a:32,cl:"Al-Hilal",s:true,caps:89},{n:"Firas Al-Buraikan",pos:"FW",a:24,cl:"Al-Fateh",s:true,caps:38}]},
+"Uruguay":{f:"🇺🇾",lat:-32.5,lng:-55.8,cap:"Montevideo",conf:"CONMEBOL",rank:20,wc:14,best:"Champions (1930,50)",coach:"Marcelo Bielsa",p:[{n:"Sergio Rochet",pos:"GK",a:29,cl:"Nacional",s:false,caps:28},{n:"Ronald Araujo",pos:"DF",a:25,cl:"Barcelona",s:true,caps:37},{n:"Federico Valverde",pos:"MF",a:26,cl:"Real Madrid",s:true,caps:55},{n:"Darwin Nunez",pos:"FW",a:25,cl:"Liverpool",s:true,caps:36},{n:"Luis Suarez",pos:"FW",a:37,cl:"Inter Miami",s:true,caps:141}]},
+"Iran":{f:"🇮🇷",lat:32.4,lng:53.7,cap:"Tehran",conf:"AFC",rank:22,wc:7,best:"Group Stage (6x)",coach:"Amir Ghalenoei",p:[{n:"Alireza Beiranvand",pos:"GK",a:32,cl:"Nottm Forest",s:true,caps:68},{n:"Sardar Azmoun",pos:"FW",a:29,cl:"Bayer Leverkusen",s:true,caps:73},{n:"Mehdi Taremi",pos:"FW",a:32,cl:"Inter Milan",s:true,caps:101}]},
+"New Zealand":{f:"🇳🇿",lat:-40.9,lng:174.9,cap:"Wellington",conf:"OFC",rank:95,wc:3,best:"Group Stage",coach:"Darren Bazeley",p:[{n:"Oliver Sail",pos:"GK",a:28,cl:"Auckland City",s:false,caps:23},{n:"Liberato Cacace",pos:"DF",a:24,cl:"Empoli",s:true,caps:29},{n:"Chris Wood",pos:"FW",a:33,cl:"Nottm Forest",s:true,caps:80}]},
+"France":{f:"🇫🇷",lat:46.2,lng:2.2,cap:"Paris",conf:"UEFA",rank:2,wc:16,best:"Champions (1998,2018)",coach:"Didier Deschamps",p:[{n:"Mike Maignan",pos:"GK",a:29,cl:"AC Milan",s:true,caps:25},{n:"William Saliba",pos:"DF",a:24,cl:"Arsenal",s:true,caps:22},{n:"Jules Kounde",pos:"DF",a:26,cl:"Barcelona",s:true,caps:45},{n:"NGolo Kante",pos:"MF",a:33,cl:"Fenerbahce",s:true,caps:61},{n:"Aurelien Tchouameni",pos:"MF",a:24,cl:"Real Madrid",s:true,caps:33},{n:"Antoine Griezmann",pos:"FW",a:33,cl:"Atletico Madrid",s:true,caps:131},{n:"Kylian Mbappe",pos:"FW",a:26,cl:"Real Madrid",s:true,caps:96},{n:"Ousmane Dembele",pos:"FW",a:28,cl:"PSG",s:true,caps:51}]},
+"Senegal":{f:"🇸🇳",lat:14.5,lng:-14.5,cap:"Dakar",conf:"CAF",rank:21,wc:4,best:"Quarters (2002)",coach:"Aliou Cisse",p:[{n:"Edouard Mendy",pos:"GK",a:32,cl:"Al-Ahli",s:true,caps:41},{n:"Kalidou Koulibaly",pos:"DF",a:33,cl:"Al-Hilal",s:true,caps:83},{n:"Sadio Mane",pos:"FW",a:32,cl:"Al-Nassr",s:true,caps:102},{n:"Ismaila Sarr",pos:"FW",a:26,cl:"Crystal Palace",s:true,caps:55},{n:"Nicolas Jackson",pos:"FW",a:23,cl:"Chelsea",s:true,caps:26}]},
+"Iraq":{f:"🇮🇶",lat:33,lng:44,cap:"Baghdad",conf:"AFC",rank:64,wc:2,best:"Group Stage (1986)",coach:"Jesus Casas",p:[{n:"Jalal Hassan",pos:"GK",a:30,cl:"Al-Zawraa",s:false,caps:25},{n:"Aymen Hussein",pos:"FW",a:27,cl:"Almeria",s:true,caps:38},{n:"Ali Adnan",pos:"DF",a:31,cl:"Portland Timbers",s:false,caps:82}]},
+"Norway":{f:"🇳🇴",lat:60.5,lng:8.5,cap:"Oslo",conf:"UEFA",rank:36,wc:4,best:"Quarters (1938)",coach:"Stale Solbakken",p:[{n:"Orjan Nyland",pos:"GK",a:33,cl:"Southampton",s:false,caps:41},{n:"Martin Odegaard",pos:"MF",a:26,cl:"Arsenal",s:true,caps:73},{n:"Erling Haaland",pos:"FW",a:24,cl:"Man City",s:true,caps:42},{n:"Alexander Sorloth",pos:"FW",a:28,cl:"Atletico Madrid",s:true,caps:51}]},
+"Argentina":{f:"🇦🇷",lat:-38.4,lng:-63.6,cap:"Buenos Aires",conf:"CONMEBOL",rank:1,wc:18,best:"Champions (1978,86,2022)",coach:"Lionel Scaloni",p:[{n:"Emiliano Martinez",pos:"GK",a:32,cl:"Aston Villa",s:true,caps:36},{n:"Cristian Romero",pos:"DF",a:27,cl:"Tottenham",s:true,caps:30},{n:"Enzo Fernandez",pos:"MF",a:24,cl:"Chelsea",s:true,caps:31},{n:"Alexis Mac Allister",pos:"MF",a:26,cl:"Liverpool",s:true,caps:34},{n:"Lionel Messi",pos:"FW",a:38,cl:"Inter Miami",s:true,caps:191},{n:"Lautaro Martinez",pos:"FW",a:27,cl:"Inter Milan",s:true,caps:58},{n:"Julian Alvarez",pos:"FW",a:25,cl:"Atletico Madrid",s:true,caps:36},{n:"Angel Di Maria",pos:"FW",a:36,cl:"Benfica",s:true,caps:145}]},
+"Algeria":{f:"🇩🇿",lat:28,lng:3,cap:"Algiers",conf:"CAF",rank:39,wc:5,best:"Round of 16 (2014)",coach:"Vladimir Petkovic",p:[{n:"Rais MBolhi",pos:"GK",a:37,cl:"Al-Ettifaq",s:false,caps:82},{n:"Ramy Bensebaini",pos:"DF",a:29,cl:"Borussia Dortmund",s:true,caps:48},{n:"Ibrahim Maza",pos:"MF",a:20,cl:"Bayer Leverkusen",s:true,caps:8},{n:"Riyad Mahrez",pos:"FW",a:35,cl:"Al-Ahli",s:true,caps:104}]},
+"Austria":{f:"🇦🇹",lat:47.5,lng:14.6,cap:"Vienna",conf:"UEFA",rank:23,wc:7,best:"3rd Place (1954)",coach:"Ralf Rangnick",p:[{n:"Patrick Pentz",pos:"GK",a:27,cl:"Bayer Leverkusen",s:false,caps:15},{n:"David Alaba",pos:"DF",a:32,cl:"Real Madrid",s:true,caps:108},{n:"Konrad Laimer",pos:"MF",a:27,cl:"Bayern Munich",s:true,caps:42},{n:"Marcel Sabitzer",pos:"MF",a:31,cl:"Borussia Dortmund",s:true,caps:67},{n:"Marko Arnautovic",pos:"FW",a:35,cl:"Man United",s:true,caps:107}]},
+"Jordan":{f:"🇯🇴",lat:30.6,lng:36.7,cap:"Amman",conf:"AFC",rank:70,wc:1,best:"1st World Cup 2026!",coach:"Hussein Ammouta",p:[{n:"Amer Shafi",pos:"GK",a:38,cl:"Al-Faisaly",s:false,caps:82},{n:"Musa Al-Tamari",pos:"FW",a:26,cl:"Montpellier",s:true,caps:51},{n:"Baha Faisal",pos:"MF",a:25,cl:"Al-Ramtha",s:false,caps:22}]},
+"England":{f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",lat:52.5,lng:-1.5,cap:"London",conf:"UEFA",rank:4,wc:16,best:"Champions (1966)",coach:"Gareth Southgate",p:[{n:"Jordan Pickford",pos:"GK",a:31,cl:"Everton",s:false,caps:51},{n:"Trent Alexander-Arnold",pos:"DF",a:26,cl:"Real Madrid",s:true,caps:39},{n:"Declan Rice",pos:"MF",a:26,cl:"Arsenal",s:true,caps:41},{n:"Jude Bellingham",pos:"MF",a:22,cl:"Real Madrid",s:true,caps:38},{n:"Phil Foden",pos:"MF",a:25,cl:"Man City",s:true,caps:36},{n:"Harry Kane",pos:"FW",a:31,cl:"Bayern Munich",s:true,caps:103},{n:"Bukayo Saka",pos:"FW",a:23,cl:"Arsenal",s:true,caps:39}]},
+"Croatia":{f:"🇭🇷",lat:45.1,lng:15.2,cap:"Zagreb",conf:"UEFA",rank:10,wc:7,best:"Runner-up (2018)",coach:"Zlatko Dalic",p:[{n:"Dominik Livakovic",pos:"GK",a:29,cl:"Fenerbahce",s:true,caps:53},{n:"Josko Gvardiol",pos:"DF",a:23,cl:"Man City",s:true,caps:42},{n:"Luka Modric",pos:"MF",a:40,cl:"Real Madrid",s:true,caps:180},{n:"Mateo Kovacic",pos:"MF",a:31,cl:"Man City",s:true,caps:104},{n:"Ivan Perisic",pos:"FW",a:35,cl:"Hajduk Split",s:true,caps:137},{n:"Andrej Kramaric",pos:"FW",a:33,cl:"Hoffenheim",s:true,caps:73}]},
+"Ghana":{f:"🇬🇭",lat:8,lng:-1.2,cap:"Accra",conf:"CAF",rank:60,wc:4,best:"Quarters (2010)",coach:"Otto Addo",p:[{n:"Lawrence Ati-Zigi",pos:"GK",a:27,cl:"St. Gallen",s:false,caps:30},{n:"Thomas Partey",pos:"MF",a:31,cl:"Arsenal",s:true,caps:55},{n:"Mohammed Kudus",pos:"FW",a:24,cl:"West Ham",s:true,caps:34},{n:"Inaki Williams",pos:"FW",a:30,cl:"Athletic Bilbao",s:true,caps:18}]},
+"Panama":{f:"🇵🇦",lat:9,lng:-80,cap:"Panama City",conf:"CONCACAF",rank:77,wc:2,best:"Group Stage (2018)",coach:"Thomas Christiansen",p:[{n:"Luis Mejia",pos:"GK",a:27,cl:"FC Dallas",s:false,caps:45},{n:"Ismael Diaz",pos:"FW",a:23,cl:"Monaco",s:true,caps:20},{n:"Edgar Barcenas",pos:"FW",a:30,cl:"Rayo Vallecano",s:true,caps:60}]},
+"Portugal":{f:"🇵🇹",lat:39.6,lng:-8,cap:"Lisbon",conf:"UEFA",rank:9,wc:9,best:"3rd Place (1966)",coach:"Roberto Martinez",p:[{n:"Diogo Costa",pos:"GK",a:25,cl:"Porto",s:false,caps:22},{n:"Ruben Dias",pos:"DF",a:28,cl:"Man City",s:true,caps:68},{n:"Bruno Fernandes",pos:"MF",a:30,cl:"Man United",s:true,caps:76},{n:"Bernardo Silva",pos:"MF",a:30,cl:"Man City",s:true,caps:80},{n:"Cristiano Ronaldo",pos:"FW",a:41,cl:"Al-Nassr",s:true,caps:222},{n:"Rafael Leao",pos:"FW",a:25,cl:"AC Milan",s:true,caps:40},{n:"Joao Felix",pos:"FW",a:25,cl:"Chelsea",s:true,caps:46}]},
+"DR Congo":{f:"🇨🇩",lat:-4,lng:21.8,cap:"Kinshasa",conf:"CAF",rank:48,wc:2,best:"Quarters (1974)",coach:"Sebastien Desabre",p:[{n:"Joel Kiassumbua",pos:"GK",a:32,cl:"Metz",s:false,caps:35},{n:"Arthur Masuaku",pos:"DF",a:30,cl:"Besiktas",s:false,caps:41},{n:"Paul-Jose Mpoku",pos:"MF",a:30,cl:"Al-Wahda",s:true,caps:58},{n:"Meschack Elia",pos:"FW",a:25,cl:"Young Boys",s:true,caps:28}]},
+"Colombia":{f:"🇨🇴",lat:4.6,lng:-74.1,cap:"Bogota",conf:"CONMEBOL",rank:11,wc:7,best:"Quarters (2014)",coach:"Nestor Lorenzo",p:[{n:"Camilo Vargas",pos:"GK",a:33,cl:"Atlas",s:false,caps:48},{n:"James Rodriguez",pos:"MF",a:34,cl:"Rayo Vallecano",s:true,caps:95},{n:"Luis Diaz",pos:"FW",a:27,cl:"Liverpool",s:true,caps:52},{n:"Jhon Duran",pos:"FW",a:21,cl:"Aston Villa",s:true,caps:15}]},
+"Uzbekistan":{f:"🇺🇿",lat:41,lng:64.6,cap:"Tashkent",conf:"AFC",rank:72,wc:1,best:"1st World Cup 2026!",coach:"Srecko Katanec",p:[{n:"Utkir Yusupov",pos:"GK",a:29,cl:"Pakhtakor",s:false,caps:20},{n:"Eldor Shomurodov",pos:"FW",a:29,cl:"Roma",s:true,caps:59},{n:"Jaloliddin Masharipov",pos:"MF",a:29,cl:"Pakhtakor",s:true,caps:50}]}
+};
+
+// Match name → country key mapping
+const CMAP={"Côte d'Ivoire":"Cote dIvoire","Türkiye":"Turkiye","Curaçao":"Curacao"};
+function getCData(name){return COUNTRIES[name]||COUNTRIES[CMAP[name]]||null}
+
+const M=[
+{id:1,date:"2026-06-11",utc:"19:00",grp:"A",home:"Mexico",away:"South Africa",hf:"🇲🇽",af:"🇿🇦",hs:2,as:0,st:"FT",venue:"Mexico City",hw:62,dw:22,aw:16,sugg:"Mexico Win",note:"Mexico hosts dominated. Prediction correct.",upset:false},
+{id:2,date:"2026-06-12",utc:"02:00",grp:"A",home:"Korea Republic",away:"Czechia",hf:"🇰🇷",af:"🇨🇿",hs:2,as:1,st:"FT",venue:"Guadalajara",hw:40,dw:30,aw:30,sugg:"Korea slight edge",note:"Korea won as predicted. Korea pressed high and quality told.",upset:false},
+{id:3,date:"2026-06-12",utc:"19:00",grp:"B",home:"Canada",away:"Bosnia",hf:"🇨🇦",af:"🇧🇦",hs:1,as:1,st:"FT",venue:"Toronto",hw:48,dw:27,aw:25,sugg:"Canada Win",note:"Bosnia held firm for a fair draw. Canada home advantage neutralised.",upset:false},
+{id:4,date:"2026-06-13",utc:"01:00",grp:"B",home:"Qatar",away:"Switzerland",hf:"🇶🇦",af:"🇨🇭",hs:1,as:1,st:"FT",venue:"San Francisco",hw:20,dw:27,aw:53,sugg:"Switzerland Win",note:"🚨 Surprise — Switzerland failed to win despite 53% odds. Qatar defensive shape held well.",upset:true},
+{id:5,date:"2026-06-13",utc:"22:00",grp:"D",home:"USA",away:"Paraguay",hf:"🇺🇸",af:"🇵🇾",hs:4,as:1,st:"FT",venue:"Los Angeles",hw:58,dw:24,aw:18,sugg:"USA Win",note:"USA dominant at home 4-1. Prediction confirmed.",upset:false},
+{id:6,date:"2026-06-13",utc:"23:00",grp:"C",home:"Brazil",away:"Morocco",hf:"🇧🇷",af:"🇲🇦",hs:1,as:1,st:"FT",venue:"New York/NJ",hw:58,dw:24,aw:18,sugg:"Brazil Win",note:"🚨 Morocco held Brazil to a draw — huge result for Regragui's African giants.",upset:true},
+{id:7,date:"2026-06-14",utc:"03:00",grp:"C",home:"Haiti",away:"Scotland",hf:"🇭🇹",af:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",hs:0,as:1,st:"FT",venue:"Boston",hw:11,dw:24,aw:65,sugg:"Scotland Win",note:"Scotland won 1-0 as expected. Haiti made history on debut.",upset:false},
+{id:8,date:"2026-06-14",utc:"06:00",grp:"D",home:"Australia",away:"Türkiye",hf:"🇦🇺",af:"🇹🇷",hs:2,as:0,st:"FT",venue:"Vancouver",hw:30,dw:27,aw:43,sugg:"Türkiye Win",note:"🚨 MAJOR UPSET! Australia 2-0. Irankunda (18) & Metcalfe scored. Türkiye rested Yildiz — never clicked.",upset:true},
+{id:9,date:"2026-06-14",utc:"17:00",grp:"E",home:"Germany",away:"Curaçao",hf:"🇩🇪",af:"🇨🇼",hs:null,as:null,st:"LIVE",venue:"Houston",hw:93,dw:5,aw:2,sugg:"Germany Win (4+ goals)",note:"🔴 LIVE NOW — 93% implied probability for Germany. Bookmaker odds: Germany 1/20, Curaçao 100/1. Best bet: Germany -3.5 AH or Over 4.5 goals (6/5 price).",upset:false},
+{id:10,date:"2026-06-14",utc:"20:00",grp:"F",home:"Netherlands",away:"Japan",hf:"🇳🇱",af:"🇯🇵",hs:null,as:null,st:"UPCOMING",venue:"Dallas",hw:56,dw:24,aw:20,sugg:"Netherlands Win",note:"56% implied for Netherlands. Japan beat Germany & Spain in Qatar 2022 — BTTS + Netherlands win is the value combo bet.",upset:false},
+{id:11,date:"2026-06-14",utc:"23:00",grp:"E",home:"Côte d'Ivoire",away:"Ecuador",hf:"🇨🇮",af:"🇪🇨",hs:null,as:null,st:"UPCOMING",venue:"Philadelphia",hw:38,dw:29,aw:33,sugg:"Draw value",note:"Closest match of the tournament so far — near even odds. Ivory Coast (AFCON holders) vs organised Ecuador. Draw at 29% is the safest value pick.",upset:false},
+{id:12,date:"2026-06-15",utc:"02:00",grp:"F",home:"Sweden",away:"Tunisia",hf:"🇸🇪",af:"🇹🇳",hs:null,as:null,st:"UPCOMING",venue:"Monterrey",hw:55,dw:26,aw:19,sugg:"Sweden Win",note:"55% implied. Gyokeres & Isak make Sweden dangerous. Sweden -1 AH is the value pick here.",upset:false},
+{id:13,date:"2026-06-15",utc:"16:00",grp:"H",home:"Spain",away:"Cape Verde",hf:"🇪🇸",af:"🇨🇻",hs:null,as:null,st:"UPCOMING",venue:"Atlanta",hw:86,dw:9,aw:5,sugg:"Spain Win big",note:"86% implied probability. Spain in world-class form with Lamine Yamal (17) & Pedri leading. Back Spain -2.5 AH.",upset:false},
+{id:14,date:"2026-06-15",utc:"19:00",grp:"G",home:"Belgium",away:"Egypt",hf:"🇧🇪",af:"🇪🇬",hs:null,as:null,st:"UPCOMING",venue:"Seattle",hw:63,dw:22,aw:15,sugg:"Belgium Win",note:"63% Belgium. De Bruyne & Lukaku should dominate. But Salah on the other side. BTTS + Belgium is value.",upset:false},
+{id:15,date:"2026-06-15",utc:"22:00",grp:"H",home:"Saudi Arabia",away:"Uruguay",hf:"🇸🇦",af:"🇺🇾",hs:null,as:null,st:"UPCOMING",venue:"Miami",hw:28,dw:30,aw:42,sugg:"Uruguay slight edge",note:"Uruguay 42% market favourite. Valverde & Darwin Nunez vs Al-Dawsari. Uruguay Draw No Bet (DNB) is advised.",upset:false},
+{id:16,date:"2026-06-16",utc:"01:00",grp:"G",home:"Iran",away:"New Zealand",hf:"🇮🇷",af:"🇳🇿",hs:null,as:null,st:"UPCOMING",venue:"Los Angeles",hw:52,dw:28,aw:20,sugg:"Iran Win",note:"Iran 52% — Taremi & Azmoun are too strong. New Zealand out of their depth here. Iran to win to nil is value.",upset:false},
+{id:17,date:"2026-06-16",utc:"19:00",grp:"I",home:"France",away:"Senegal",hf:"🇫🇷",af:"🇸🇳",hs:null,as:null,st:"UPCOMING",venue:"New York/NJ",hw:55,dw:24,aw:21,sugg:"France Win",note:"Only 55% implied for France — not massive favourites vs Senegal. Mbappe vs Koulibaly. BTTS very likely. France -0.5 AH.",upset:false},
+{id:18,date:"2026-06-16",utc:"22:00",grp:"I",home:"Iraq",away:"Norway",hf:"🇮🇶",af:"🇳🇴",hs:null,as:null,st:"UPCOMING",venue:"Boston",hw:19,dw:26,aw:55,sugg:"Norway Win",note:"55% Norway implied. Haaland as heavy favourite. Iraq's first WCup since 1986. Norway -1.5 AH or Over 2.5 goals.",upset:false},
+{id:19,date:"2026-06-17",utc:"01:00",grp:"J",home:"Argentina",away:"Algeria",hf:"🇦🇷",af:"🇩🇿",hs:null,as:null,st:"UPCOMING",venue:"Kansas City",hw:79,dw:13,aw:8,sugg:"Argentina Win",note:"79% implied for reigning World Champions. Messi farewell World Cup. Algeria dangerous at set pieces only. Argentina -1.5 AH.",upset:false},
+{id:20,date:"2026-06-17",utc:"04:00",grp:"J",home:"Austria",away:"Jordan",hf:"🇦🇹",af:"🇯🇴",hs:null,as:null,st:"UPCOMING",venue:"San Francisco",hw:72,dw:18,aw:10,sugg:"Austria Win",note:"72% Austria. Rangnick's superbly organised side vs Jordan's first ever WCup. Austria -1.5 AH for value.",upset:false},
+{id:21,date:"2026-06-17",utc:"19:00",grp:"L",home:"England",away:"Croatia",hf:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",af:"🇭🇷",hs:null,as:null,st:"UPCOMING",venue:"Dallas",hw:50,dw:28,aw:22,sugg:"England Win",note:"Exactly 50/50. England motivated after 2022 QF exit. Luka Modric (40) aging but pure genius. England -0.5 AH is low risk.",upset:false},
+{id:22,date:"2026-06-17",utc:"22:00",grp:"L",home:"Ghana",away:"Panama",hf:"🇬🇭",af:"🇵🇦",hs:null,as:null,st:"UPCOMING",venue:"Toronto",hw:52,dw:28,aw:20,sugg:"Ghana Win",note:"Ghana 52% — Kudus & Partey lead a strong European-based squad. Panama physical but limited. Ghana -0.5 AH.",upset:false},
+{id:23,date:"2026-06-17",utc:"19:00",grp:"K",home:"Portugal",away:"DR Congo",hf:"🇵🇹",af:"🇨🇩",hs:null,as:null,st:"UPCOMING",venue:"Houston",hw:78,dw:14,aw:8,sugg:"Portugal Win",note:"78% Portugal. Ronaldo's likely last WCup appearance. Deep squad beyond him. DR Congo debut. Portugal -2 AH is value.",upset:false},
+{id:24,date:"2026-06-17",utc:"22:00",grp:"K",home:"Colombia",away:"Uzbekistan",hf:"🇨🇴",af:"🇺🇿",hs:null,as:null,st:"UPCOMING",venue:"San Francisco",hw:68,dw:20,aw:12,sugg:"Colombia Win",note:"68% Colombia. Diaz & James Rodriguez too creative. Uzbekistan only 2nd WCup. Colombia -1 AH or Over 2.5 goals.",upset:false}
+];
+
+let picks=JSON.parse(localStorage.getItem("wc26v5")||"{}");
+let curTab="all",curPos="ALL",curC=null;
+
+function myt(d,u){const[y,mo,dd]=d.split("-").map(Number);const[h,mi]=u.split(":").map(Number);return new Date(Date.UTC(y,mo-1,dd,h,mi)).toLocaleTimeString("en-MY",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Kuala_Lumpur"})+" MYT"}
+function fmtD(ds){const[y,m,d]=ds.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString("en-MY",{weekday:"short",day:"numeric",month:"short"})}
+function isToday(ds){return ds===new Date().toISOString().split("T")[0]}
+function getAR(m){if(m.st!=="FT")return null;return m.hs>m.as?"home":m.hs<m.as?"away":"draw"}
+
+function renderAll(tab){
+  curTab=tab;
+  const today=new Date().toISOString().split("T")[0];
+  let list=M;
+  if(tab==="today")list=M.filter(m=>m.date===today);
+  else if(tab==="upcoming")list=M.filter(m=>m.st==="UPCOMING"||m.st==="LIVE");
+  else if(tab==="results")list=M.filter(m=>m.st==="FT");
+  else if(tab==="picks")list=M.filter(m=>picks[m.id]);
+  const byD={};list.forEach(m=>{(byD[m.date]=byD[m.date]||[]).push(m)});
+  const el=document.getElementById("ml");
+  if(!Object.keys(byD).length){el.innerHTML='<div class="empty">No matches here yet.</div>';updStats();return;}
+  el.innerHTML=Object.keys(byD).sort().map(dt=>{
+    const b=isToday(dt)?'<span class="tbadge">TODAY</span>':"";
+    return`<div class="dh">${fmtD(dt)} ${b}</div>`+byD[dt].map(mkCard).join("");
+  }).join("");
+  updStats();
+}
+
+function mkCard(m){
+  const p=picks[m.id],ar=getAR(m),ok=p&&ar?p===ar:null;
+  const sep=m.hs!==null?"–":"vs",hsD=m.hs!==null?m.hs:"",asD=m.as!==null?m.as:"";
+  let sp="";
+  if(m.st==="FT")sp='<span class="sp ft">FT</span>';
+  else if(m.st==="LIVE")sp='<span class="sp live">LIVE</span>';
+  else sp=`<span class="sp up">${myt(m.date,m.utc)}</span>`;
+  const ut=m.upset&&m.st==="FT"?'<span class="utag">UPSET</span>':"";
+  const cc=m.st==="LIVE"?"card livec":m.st==="FT"?(m.upset?"card done upsetc":"card done"):"card";
+  const hLbl=m.hw>=14?`${m.hw}%`:"",dLbl=m.dw>=11?`${m.dw}%`:"",aLbl=m.aw>=14?`${m.aw}%`:"";
+  const pH=p==="home"?"pbb selh":"pbb",pD=p==="draw"?"pbb seld":"pbb",pA=p==="away"?"pbb sela":"pbb";
+  const hn=m.home.split(" ")[0],an=m.away.split(" ")[0];
+  let rb="";
+  if(p&&ar)rb=`<span class="rbdg ${ok?"rc":"rw"}">${ok?"✓ Correct":"✗ Wrong"}</span>`;
+  else if(p){const pl=p==="home"?m.home:p==="away"?m.away:"Draw";rb=`<span class="rbdg rp">Pick: ${pl}</span>`;}
+  const hid=m.id+"h",aid=m.id+"a";
+  return`<div class="${cc}" id="c${m.id}">
+<div class="ct"><span class="cg">Group ${m.grp}</span>${ut}<span class="cv">📍${m.venue}</span><span class="ctime ${m.st==="LIVE"?"livet":""}">${m.st==="FT"?"Full Time":m.st==="LIVE"?"● LIVE":myt(m.date,m.utc)}</span></div>
+<div class="tr">
+  <div class="team" onclick="openC(${hid})" title="Tap to view ${m.home} squad">
+    <div class="flagw"><span class="tf">${m.hf}</span></div>
+    <div><div class="tn">${m.home}</div><span class="taphint">👤 squad & map</span></div>
+  </div>
+  <div class="sb2"><div class="sc">${hsD} ${sep} ${asD}</div>${sp}</div>
+  <div class="team away" onclick="openC(${aid})" title="Tap to view ${m.away} squad">
+    <div><div class="tn">${m.away}</div><span class="taphint">👤 squad & map</span></div>
+    <div class="flagw"><span class="tf">${m.af}</span></div>
+  </div>
+</div>
+<div class="prow">
+  <div class="plr"><span class="${p==="home"?"hl":""}">${m.home}</span><span>Win Probability (Bookie Implied)</span><span class="${p==="away"?"hl":""}">${m.away}</span></div>
+  <div class="pbar"><div class="phb" style="width:${m.hw}%">${hLbl}</div><div class="pdb" style="width:${m.dw}%">${dLbl}</div><div class="pab" style="width:${m.aw}%">${aLbl}</div></div>
+  <div class="pteams"><span class="phl">${m.hw}% Win</span><span class="pdl">${m.dw}% Draw</span><span class="pal">${m.aw}% Win</span></div>
+</div>
+<div class="pp">
+  <div class="pks"><div class="pl">Your Pick</div><div class="pbr"><button class="${pH}" onclick="setPick(${m.id},'home')">${hn}</button><button class="${pD}" onclick="setPick(${m.id},'draw')">Draw</button><button class="${pA}" onclick="setPick(${m.id},'away')">${an}</button></div>${rb?`<div style="margin-top:5px">${rb}</div>`:""}</div>
+  <div class="ris"><div class="pl">Analysis — <span class="sugg">${m.sugg}</span></div><div class="at">${m.note}</div></div>
+</div></div>`;
+}
+
+// Expose country name lookup by element id trick
+const ID2NAME={};
+M.forEach(m=>{ID2NAME[m.id+"h"]=m.home;ID2NAME[m.id+"a"]=m.away;});
+function openC(id){
+  const name=ID2NAME[id];
+  if(!name)return;
+  const c=getCData(name);
+  if(!c){toast("No data for "+name);return;}
+  curC=name;curPos="ALL";
+  document.getElementById("mFlag").textContent=c.f;
+  document.getElementById("mName").textContent=name;
+  document.getElementById("mhtitle").textContent=name+" — Country Profile";
+  document.getElementById("mTags").innerHTML=[
+    `<span class="mtag">🏙 ${c.cap}</span>`,
+    `<span class="mtag">🌍 ${c.conf}</span>`,
+    `<span class="mtag">🏅 FIFA #${c.rank}</span>`,
+    `<span class="mtag">🌐 ${c.wc}× WCup</span>`,
+    `<span class="mtag">🏆 ${c.best}</span>`,
+    `<span class="mtag">👨‍💼 ${c.coach}</span>`
+  ].join("");
+  document.getElementById("mapF").innerHTML=`<iframe loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=${c.lng-20},${c.lat-13},${c.lng+20},${c.lat+13}&layer=mapnik&marker=${c.lat},${c.lng}" style="width:100%;height:100%;border:none" allowfullscreen></iframe>`;
+  const stars=c.p.filter(x=>x.s).length;
+  const avgA=(c.p.reduce((a,x)=>a+x.a,0)/c.p.length).toFixed(0);
+  const maxC=Math.max(...c.p.map(x=>x.caps||0));
+  document.getElementById("cStats").innerHTML=`
+<div class="cst"><div class="csn">#${c.rank}</div><div class="csl">FIFA Rank</div></div>
+<div class="cst"><div class="csn">${c.wc}</div><div class="csl">WC Appearances</div></div>
+<div class="cst"><div class="csn">${avgA}</div><div class="csl">Avg Age</div></div>
+<div class="cst"><div class="csn">${c.p.length}</div><div class="csl">Players Listed</div></div>
+<div class="cst"><div class="csn">${stars}⭐</div><div class="csl">Key Stars</div></div>
+<div class="cst"><div class="csn">${maxC}</div><div class="csl">Top Caps</div></div>`;
+  document.querySelectorAll(".pfb").forEach(b=>b.classList.remove("pfa"));
+  document.querySelector(".pfb").classList.add("pfa");
+  renderPlayers(c,"ALL");
+  document.getElementById("mbg").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+
+function renderPlayers(c,pos){
+  const pc={GK:"posGK",DF:"posDF",MF:"posMF",FW:"posFW"};
+  const list=pos==="ALL"?c.p:c.p.filter(x=>x.pos===pos);
+  document.getElementById("pgrid").innerHTML=list.length?list.map(x=>`
+<div class="pc ${x.s?"star":""}">
+  ${x.s?'<span class="stic">⭐</span>':""}
+  <span class="ppos ${pc[x.pos]||""}">${x.pos}</span>
+  <div class="pname">${x.n}</div>
+  <div class="pclub">${x.cl}</div>
+  <div class="page">Age ${x.a}${x.caps?" · "+x.caps+" caps":""}</div>
+</div>`).join(""):'<div style="color:var(--textm);font-size:12px;padding:8px">None listed.</div>';
+}
+
+function fpos(pos,btn){
+  curPos=pos;
+  document.querySelectorAll(".pfb").forEach(b=>b.classList.remove("pfa"));
+  btn.classList.add("pfa");
+  const c=getCData(curC);
+  if(c)renderPlayers(c,pos);
+}
+
+function closeBG(e){if(e.target===document.getElementById("mbg"))closeM()}
+function closeM(){document.getElementById("mbg").classList.remove("open");document.body.style.overflow=""}
+
+function setPick(id,pick){
+  const m=M.find(x=>x.id===id);if(!m)return;
+  if(picks[id]===pick)delete picks[id];else picks[id]=pick;
+  localStorage.setItem("wc26v5",JSON.stringify(picks));
+  renderAll(curTab);
+  const pl=pick==="home"?m.home:pick==="away"?m.away:"Draw";
+  toast(picks[id]?"Pick: "+pl:"Pick cleared");
+}
+function updStats(){
+  const done=M.filter(m=>m.st==="FT").length;
+  const np=Object.keys(picks).length;
+  let cor=0;
+  M.filter(m=>m.st==="FT"&&picks[m.id]).forEach(m=>{if(picks[m.id]===getAR(m))cor++;});
+  const rated=M.filter(m=>m.st==="FT"&&picks[m.id]).length;
+  document.getElementById("sDone").textContent=done;
+  document.getElementById("sPicks").textContent=np;
+  document.getElementById("sCor").textContent=cor;
+  document.getElementById("sRate").textContent=rated?Math.round(cor/rated*100)+"%":"—";
+}
+function swTab(tab,btn){document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));btn.classList.add("active");renderAll(tab)}
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200)}
+async function doRefresh(){
+  const btn=document.getElementById("rbtn");btn.classList.add("spin");btn.disabled=true;
+  document.getElementById("lo").classList.add("show");
+  await new Promise(r=>setTimeout(r,1100));
+  document.getElementById("lo").classList.remove("show");btn.classList.remove("spin");btn.disabled=false;
+  const now=new Date().toLocaleTimeString("en-MY",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Kuala_Lumpur"});
+  document.getElementById("lu").textContent="Updated "+now+" MYT";
+  renderAll(curTab);toast("✓ Refreshed");
+}
+renderAll("all");
+const _n=new Date().toLocaleTimeString("en-MY",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Kuala_Lumpur"});
+document.getElementById("lu").textContent="Loaded "+_n+" MYT";
+</script>
+</body>
+</html>
